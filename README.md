@@ -25,3 +25,7 @@ Vite + vanilla JavaScript (no framework). English and Armenian.
 - To add or change text: edit `content.js` or `index.html`, then add/update the matching key in `translations.js`.
 - The contact form does not send anything yet (see `reveal.js`, last lines). Connect it to a real email/backend before launch.
 - Contact details shown: magical.am, Instagram @official_magical_company, "Armenia". No email/phone is shown because none was confirmed.
+
+## Responsive notes
+- No element may exceed the viewport width. The hero/CTA glow (`.orb`) is sized in `vw`, sections use `overflow-x: clip`, grid/flex children have `min-width: 0`, and long text uses `overflow-wrap`.
+- Mobile rules (≤640 / ≤480 / ≤360px) are at the end of `src/styles.css`.
