@@ -37,7 +37,7 @@
   @keyframes mm-tw{50%{opacity:.45}}
 
   /* header while the layer is open: stays on top, becomes transparent */
-  header{transition:box-shadow .4s,background-color .5s,border-color .5s}
+  header{transition:box-shadow .4s,background-color .5s,border-color .5s,-webkit-backdrop-filter .5s,backdrop-filter .5s}
   header.mo{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom-color:transparent;box-shadow:none}
   header .hr .btn:not(#lg){transition:opacity .3s,transform .2s,box-shadow .2s,background .2s,translate .25s}
   header.mo .hr .btn:not(#lg){opacity:0;pointer-events:none}
@@ -48,16 +48,16 @@
   .mm{--hh:80px;--ox:calc(100% - 46px);--oy:40px;position:fixed;inset:0;z-index:19;display:block;overflow:hidden;visibility:hidden;pointer-events:none;
     background:radial-gradient(120% 65% at 100% 0%,rgba(79,70,229,.26),transparent 62%),radial-gradient(100% 60% at 0% 100%,rgba(139,92,246,.24),transparent 60%),rgba(4,4,7,.965);
     -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
-    clip-path:circle(0px at var(--ox) var(--oy));
+    clip-path:circle(0px at var(--ox) var(--oy));will-change:clip-path;
     transition:clip-path .75s cubic-bezier(.7,0,.2,1) .28s,visibility 0s linear 1.03s}
   .mm.open{visibility:visible;pointer-events:auto;clip-path:circle(140vmax at var(--ox) var(--oy));transition:clip-path .95s cubic-bezier(.65,0,.15,1),visibility 0s}
-  .mm:not(.open) *{animation-play-state:paused!important}
+  .mm.idle *{animation-play-state:paused!important}
 
   .mm-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
   .mm-grid{position:absolute;inset:-44px 0 0;background-image:linear-gradient(rgba(139,92,246,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.10) 1px,transparent 1px);background-size:44px 44px;
     -webkit-mask:radial-gradient(ellipse 90% 70% at 75% 15%,#000,transparent 75%);mask:radial-gradient(ellipse 90% 70% at 75% 15%,#000,transparent 75%);animation:mm-grid 14s linear infinite}
   @keyframes mm-grid{to{transform:translateY(44px)}}
-  .mm-glow{position:absolute;border-radius:50%;filter:blur(46px)}
+  .mm-glow{position:absolute;border-radius:50%;filter:blur(46px);will-change:transform}
   .mm-glow.g1{width:min(340px,80vw);height:min(340px,80vw);right:-24%;top:-8%;background:rgba(99,102,241,.32);animation:mm-float 9s ease-in-out infinite}
   .mm-glow.g2{width:min(320px,76vw);height:min(320px,76vw);left:-26%;bottom:-6%;background:rgba(139,92,246,.30);animation:mm-float 11s ease-in-out -4s infinite reverse}
   @keyframes mm-float{50%{transform:translate(-18px,22px) scale(1.12)}}

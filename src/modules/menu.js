@@ -7,7 +7,7 @@ if (mb && mm) {
   const items = [...mm.querySelectorAll('.mm-i')];
   const desk = matchMedia('(min-width:961px)');
   const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  let isOpen = false;
+  let isOpen = false, idleTimer = 0;
 
   // floating particles (few, small, slow)
   const dots = mm.querySelector('.mm-dots');
@@ -35,10 +35,18 @@ if (mb && mm) {
     isOpen = o;
     if (o) {
       const r = mb.getBoundingClientRect();
+      // Set the origin with transitions off and commit it, so the circle grows from the real button centre
+      // instead of interpolating from the CSS default origin.
+      mm.style.transition = 'none';
       mm.style.setProperty('--ox', (r.left + r.width / 2) + 'px');
       mm.style.setProperty('--oy', (r.top + r.height / 2) + 'px');
+      void mm.offsetWidth;
+      mm.style.transition = '';
       spy(); rail();
     }
+    // keep decorative animations running through the whole close, pause them only once the layer is gone
+    clearTimeout(idleTimer);
+    if (o) mm.classList.remove('idle'); else idleTimer = setTimeout(() => { if (!isOpen) mm.classList.add('idle'); }, 1100);
     mm.classList.toggle('open', o); mb.classList.toggle('open', o); header.classList.toggle('mo', o);
     root.classList.toggle('mm-lock', o);
     mb.setAttribute('aria-expanded', String(o)); mb.setAttribute('aria-label', label(o));
