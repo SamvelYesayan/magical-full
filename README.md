@@ -29,3 +29,8 @@ Vite + vanilla JavaScript (no framework). English and Armenian.
 ## Responsive notes
 - No element may exceed the viewport width. The hero/CTA glow (`.orb`) is sized in `vw`, sections use `overflow-x: clip`, grid/flex children have `min-width: 0`, and long text uses `overflow-wrap`.
 - Mobile rules (≤640 / ≤480 / ≤360px) are at the end of `src/styles.css`.
+
+## Mobile navigation (<=960px)
+- `index.html` — `#mb` (the "M" portal button, inside the header) and `#mm` (full-screen layer). Both are `display:none` above 960px, so desktop is unchanged.
+- `src/mobile-menu.css` — all menu styling and animation. `src/modules/menu.js` — open/close, scroll-spy, particles, link handling.
+- Menu items use the same English text keys as the desktop nav, so `translations.js` translates them automatically. Links point to the existing sections (#services, #why, #work, #process, #about, #contact).
