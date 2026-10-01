@@ -16,3 +16,10 @@ changes, long-animation-frames and layout shifts for each open/close, and has ch
 ## v4 – backdrop-filter finding
 On a real S26 Ultra `no-mm-backdrop` removes the jitter. Plain removal lets the page behind ghost through (the layer is only 96.5% opaque),
 so v4 adds the diagnostic chip `FIX-opaque-base` (no backdrop-filter + fully opaque base colour) for on-device A/B. Production CSS still unchanged.
+
+## v5 – PRODUCTION FIX (verified on a real Galaxy S26 Ultra via ?mmdiag A/B)
+`.mm` in `src/mobile-menu.css`:
+- removed `-webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px)`
+- base colour `rgba(4,4,7,.965)` -> `rgb(4,4,7)`
+Nothing else changed (gradients, clip-path, transitions, will-change identical). Diagnostic chips `no-mm-backdrop`, `FIX-opaque-base`
+are kept; `OLD-backdrop` restores the previous look for comparison. The header's own backdrop-filter is untouched.
