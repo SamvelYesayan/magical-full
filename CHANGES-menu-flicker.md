@@ -12,3 +12,7 @@ Causes found (measured in Chromium, not guessed):
 No visual/production CSS change. Added opt-in on-device diagnostics: open `https://<site>/?mmdiag` on the phone
 (`src/modules/menu-diag.js`, separate chunk, not requested without the flag). It records frame times, viewport/visualViewport
 changes, long-animation-frames and layout shifts for each open/close, and has chips that switch single suspects off for A/B.
+
+## v4 – backdrop-filter finding
+On a real S26 Ultra `no-mm-backdrop` removes the jitter. Plain removal lets the page behind ghost through (the layer is only 96.5% opaque),
+so v4 adds the diagnostic chip `FIX-opaque-base` (no backdrop-filter + fully opaque base colour) for on-device A/B. Production CSS still unchanged.

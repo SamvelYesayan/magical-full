@@ -10,6 +10,8 @@ const SUSPECTS = {
   'no-item-blur': '.mm-i,.mm-foot{filter:none!important;transition-property:opacity,transform!important}',
   'no-wm-shadow': '.mm-wm{filter:none!important}',
   'keep-idle-paused': '.mm *{animation-play-state:paused!important}',
+  // CANDIDATE FIX (not in production yet): no backdrop-filter, and the base colour made fully opaque so the page behind cannot ghost through
+  'FIX-opaque-base': '.mm{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:radial-gradient(120% 65% at 100% 0%,rgba(79,70,229,.26),transparent 62%),radial-gradient(100% 60% at 0% 100%,rgba(139,92,246,.24),transparent 60%),rgb(4,4,7)!important}',
   'no-warm': '.mm.warm{visibility:hidden!important}',
 };
 const style = document.createElement('style'); document.head.appendChild(style);
