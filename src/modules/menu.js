@@ -30,32 +30,54 @@ if (mb && mm) {
   function rail() { const n = mm.querySelector('.mm-nav'); n.style.setProperty('--rail', n.offsetHeight + 'px'); }
   const label = o => document.documentElement.lang === 'hy' ? (o ? 'Փակել' : 'Մենյու') : (o ? 'Close menu' : 'Menu');
 
+  // Aim the reveal circle at the button centre. Origin is written with transitions off and committed, so the circle
+  // grows from the real button centre instead of interpolating from the CSS default origin.
+  let aimed = false, warmT = 0, byPointer = false;
+  function aim() {
+    const r = mb.getBoundingClientRect();
+    mm.style.transition = 'none';
+    mm.style.setProperty('--ox', (r.left + r.width / 2) + 'px');
+    mm.style.setProperty('--oy', (r.top + r.height / 2) + 'px');
+    void mm.offsetWidth;
+    mm.style.transition = '';
+    aimed = true;
+  }
+  // Press-down happens ~50-150ms before the click: do the measuring / forced layout there and let the compositor
+  // paint the (still fully clipped, invisible) layer, so the click frame itself only starts the transitions.
+  function warm() {
+    byPointer = true;
+    if (isOpen) return;
+    aim(); spy(); rail();
+    mm.classList.add('warm');
+    clearTimeout(warmT); warmT = setTimeout(cool, 1500);
+  }
+  function cool() { clearTimeout(warmT); if (!isOpen) mm.classList.remove('warm'); }
+
   function setOpen(o, opts = {}) {
     if (o === isOpen) return;
     isOpen = o;
     if (o) {
-      const r = mb.getBoundingClientRect();
-      // Set the origin with transitions off and commit it, so the circle grows from the real button centre
-      // instead of interpolating from the CSS default origin.
-      mm.style.transition = 'none';
-      mm.style.setProperty('--ox', (r.left + r.width / 2) + 'px');
-      mm.style.setProperty('--oy', (r.top + r.height / 2) + 'px');
-      void mm.offsetWidth;
-      mm.style.transition = '';
-      spy(); rail();
+      if (!aimed) { aim(); spy(); rail(); }   // keyboard / no press-down: same as before
+      aimed = false;
     }
     // keep decorative animations running through the whole close, pause them only once the layer is gone
     clearTimeout(idleTimer);
     if (o) mm.classList.remove('idle'); else idleTimer = setTimeout(() => { if (!isOpen) mm.classList.add('idle'); }, 1100);
+    mm.classList.remove('warm');
     mm.classList.toggle('open', o); mb.classList.toggle('open', o); header.classList.toggle('mo', o);
     root.classList.toggle('mm-lock', o);
     mb.setAttribute('aria-expanded', String(o)); mb.setAttribute('aria-label', label(o));
     mm.setAttribute('aria-hidden', String(!o));
-    if (o) setTimeout(() => { if (isOpen) links[0].focus({ preventScroll: true }); }, 520);
-    else if (opts.focus !== false) mb.focus({ preventScroll: true });
+    if (o) setTimeout(() => { if (isOpen) links[0].focus({ preventScroll: true, focusVisible: !byPointer }); }, 520);
+    else if (opts.focus !== false) mb.focus({ preventScroll: true, focusVisible: !byPointer });
   }
 
-  mb.addEventListener('click', () => setOpen(!isOpen));
+  mb.addEventListener('pointerdown', warm, { passive: true });
+  mb.addEventListener('pointercancel', cool);
+  addEventListener('resize', () => { aimed = false; });
+  mb.addEventListener('click', () => { setOpen(!isOpen); cool(); });
+  mb.addEventListener('keydown', () => { byPointer = false; });
+  addEventListener('keydown', e => { if (e.key === 'Escape') byPointer = false; }, true);
   addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen) setOpen(false); });
   desk.addEventListener('change', e => { if (e.matches) setOpen(false, { focus: false }); });
 
@@ -75,4 +97,5 @@ if (mb && mm) {
     a.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { move(e); a.classList.add('hot'); } });
     a.addEventListener('pointerleave', () => a.classList.remove('hot'));
   });
+  if (/[?&]mmdiag/.test(location.search)) import('./menu-diag.js');
 }

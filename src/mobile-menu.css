@@ -4,20 +4,32 @@
    Desktop is untouched: .mb and .mm are display:none above 960px.
    ========================================================== */
 :root{--blu:#38bdf8}
+/* The button's two radial gradients used to swap instantly on click (gradients don't interpolate = a visible snap on frame 1).
+   Same gradients, but their positions/colours are registered properties so the existing .5s background timing morphs them. */
+@property --b1x{syntax:'<percentage>';inherits:false;initial-value:28%}
+@property --b1y{syntax:'<percentage>';inherits:false;initial-value:18%}
+@property --b1c{syntax:'<color>';inherits:false;initial-value:rgba(139,92,246,.42)}
+@property --b2x{syntax:'<percentage>';inherits:false;initial-value:90%}
+@property --b2y{syntax:'<percentage>';inherits:false;initial-value:100%}
+@property --b2c{syntax:'<color>';inherits:false;initial-value:rgba(56,189,248,.22)}
 .mb,.mm{display:none}
 
 @media(max-width:960px){
   /* ---------- the button ---------- */
   .mb{position:relative;display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:13px;color:#fff;cursor:pointer;isolation:isolate;-webkit-tap-highlight-color:transparent;
-    background:radial-gradient(circle at 28% 18%,rgba(139,92,246,.42),transparent 62%),radial-gradient(circle at 90% 100%,rgba(56,189,248,.22),transparent 60%),#0e0e13;
-    animation:mm-idle 4.5s ease-in-out infinite;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .5s,background .5s}
+    --b1x:28%;--b1y:18%;--b1c:rgba(139,92,246,.42);--b2x:90%;--b2y:100%;--b2c:rgba(56,189,248,.22);
+    background:radial-gradient(circle at var(--b1x) var(--b1y),var(--b1c),transparent 62%),radial-gradient(circle at var(--b2x) var(--b2y),var(--b2c),transparent 60%),#0e0e13;
+    outline:2px solid transparent;outline-offset:3px;
+    animation:mm-idle 4.5s ease-in-out infinite;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .5s,background .5s,outline-color .35s,--b1x .5s,--b1y .5s,--b1c .5s,--b2x .5s,--b2y .5s,--b2c .5s}
+  /* keyboard focus ring: same ring as the global :focus-visible, but faded in instead of popping on the click frame */
+  .mb:focus-visible{outline-color:var(--pri2)}
   .mb::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
     background:conic-gradient(from var(--a),rgba(139,92,246,.15) 0 55%,var(--pri2) 72%,var(--blu) 86%,rgba(139,92,246,.15));
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 5s linear infinite}
   .mb::after{content:"";position:absolute;inset:-7px;border-radius:20px;z-index:-1;background:radial-gradient(circle,rgba(139,92,246,.55),rgba(56,189,248,.18) 60%,transparent 72%);filter:blur(6px);opacity:0;transition:opacity .5s}
   .mb:active{transform:scale(.9)}
   .mb:active::after,.mb.open::after{opacity:1}
-  .mb.open{box-shadow:0 0 0 1px rgba(56,189,248,.28) inset;background:radial-gradient(circle at 70% 20%,rgba(56,189,248,.34),transparent 62%),radial-gradient(circle at 20% 100%,rgba(139,92,246,.4),transparent 60%),#0e0e13}
+  .mb.open{box-shadow:0 0 0 1px rgba(56,189,248,.28) inset;--b1x:70%;--b1y:20%;--b1c:rgba(56,189,248,.34);--b2x:20%;--b2y:100%;--b2c:rgba(139,92,246,.4)}
   @keyframes mm-idle{50%{box-shadow:0 0 18px -6px rgba(139,92,246,.7)}}
 
   .mb-g{width:26px;height:26px;overflow:visible}
@@ -42,7 +54,7 @@
   header .hr .btn:not(#lg){transition:opacity .3s,transform .2s,box-shadow .2s,background .2s,translate .25s}
   header.mo .hr .btn:not(#lg){opacity:0;pointer-events:none}
 
-  html.mm-lock{overflow:hidden}
+  html.mm-lock{overflow:hidden;scrollbar-gutter:stable}
 
   /* ---------- the layer ---------- */
   .mm{--hh:80px;--ox:calc(100% - 46px);--oy:40px;position:fixed;inset:0;z-index:19;display:block;overflow:hidden;visibility:hidden;pointer-events:none;
@@ -50,6 +62,7 @@
     -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
     clip-path:circle(0px at var(--ox) var(--oy));will-change:clip-path;
     transition:clip-path .75s cubic-bezier(.7,0,.2,1) .28s,visibility 0s linear 1.03s}
+  .mm.warm{visibility:visible;transition:clip-path .75s cubic-bezier(.7,0,.2,1) .28s,visibility 0s}
   .mm.open{visibility:visible;pointer-events:auto;clip-path:circle(140vmax at var(--ox) var(--oy));transition:clip-path .95s cubic-bezier(.65,0,.15,1),visibility 0s}
   .mm.idle *{animation-play-state:paused!important}
 
