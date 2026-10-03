@@ -23,3 +23,9 @@ so v4 adds the diagnostic chip `FIX-opaque-base` (no backdrop-filter + fully opa
 - base colour `rgba(4,4,7,.965)` -> `rgb(4,4,7)`
 Nothing else changed (gradients, clip-path, transitions, will-change identical). Diagnostic chips `no-mm-backdrop`, `FIX-opaque-base`
 are kept; `OLD-backdrop` restores the previous look for comparison. The header's own backdrop-filter is untouched.
+
+## FOUC fix (first-load unstyled HTML)
+Root cause: `index.html` contained no stylesheet reference. All CSS (fonts, styles.css, mobile-menu.css) was `import`ed from `src/main.js`, so it
+only applied once the JS module graph had been fetched and executed (always the case in `vite dev`/unbuilt serving, where Vite injects the CSS from JS).
+Fix: the three stylesheets are now `<link rel="stylesheet">` tags in `<head>` (same order as before; fonts moved to `src/fonts.css` via @import),
+and the CSS imports were removed from `main.js`. Vite bundles/hashes these links in `vite build`; no design, animation or JS behaviour changed.
